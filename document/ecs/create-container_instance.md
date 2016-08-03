@@ -11,7 +11,7 @@ aws ec2 create-security-group \
   --vpc-id vpc-0f8dec68
 ```
 
-実行結果は以下のとおり。
+ 実行結果は以下のとおり。
 
  ```sh
 [root@localhost aws]# aws ec2 create-security-group \
@@ -45,7 +45,7 @@ aws ec2 authorize-security-group-ingress \
 aws ec2 describe-security-groups --group-id sg-c029c6ba
 ```
 
-実行結果は以下のとおり。
+ 実行結果は以下のとおり。
 
  ```sh
 [root@localhost aws]# aws ec2 describe-security-groups --group-id sg-c029c6ba
@@ -104,7 +104,7 @@ aws ec2 describe-security-groups --group-id sg-c029c6ba
   - [コンテナインスタンス用のロール作成](https://github.com/maehachi08/aws-ecs-ecr-test/blob/master/document/ecs/create-role-for-container_instance.md) で作成したロールを紐付けてコンテナインスタンスに適用する
 
 
-```sh
+ ```sh
 aws iam create-instance-profile \
   --instance-profile-name web
 
@@ -113,9 +113,9 @@ aws iam add-role-to-instance-profile \
   --role-name ecsInstanceRole
 ```
 
-実行結果は以下のとおり。
+ 実行結果は以下のとおり。
 
-```sh
+ ```sh
 [root@localhost aws]# aws iam create-instance-profile \
 >   --instance-profile-name web
 {
@@ -160,7 +160,7 @@ aws ec2 run-instances --image-id ami-55870742 \
   --associate-public-ip-address
 ```
 
-実行結果は以下のとおり。
+ 実行結果は以下のとおり。
 
  ```sh
 [root@localhost aws]# aws ec2 run-instances --image-id ami-55870742 \
