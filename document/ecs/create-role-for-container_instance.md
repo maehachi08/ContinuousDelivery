@@ -37,7 +37,7 @@ EOT
 aws iam create-role --role-name ecsInstanceRole --assume-role-policy-document file://ecsInstanceRole.json
 ```
 
-### 実行結果
+ 実行結果は以下のとおり。
 
  ```sh
 [root@localhost aws]# aws iam create-role --role-name ecsInstanceRole --assume-role-policy-document file://ecsInstanceRole.json
@@ -73,7 +73,7 @@ aws iam create-role --role-name ecsInstanceRole --assume-role-policy-document fi
 aws iam get-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
 ```
 
-### 実行結果
+ 実行結果は以下のとおり。
 
  ```sh
 [root@localhost aws]# aws iam get-policy --policy-arn arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
