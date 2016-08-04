@@ -14,7 +14,7 @@ ADD tomcat.conf /etc/httpd/conf.d/tomcat.conf
 
 # tgzファイルをADDで指定した場合、
 # 解凍された状態で配置先に配置される
-ADD hello.tgz /var/lib/tomcat/webapps/
+ADD hello /var/lib/tomcat/webapps/hello/
 #COPY hello.tgz /tmp/hello.tgz
 #RUN tar xzf /tmp/hello.tgz -C /var/lib/tomcat/webapps/
 
