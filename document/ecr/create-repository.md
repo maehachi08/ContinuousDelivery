@@ -57,20 +57,18 @@ secret_key     ****************XXXX              env
 
 ```sh
 ECR_REPOSITORY=ecr-handson-httpd
-aws ecr create-repository --repository-name ${ECR_REPOSITORY}
+aws ecr create-repository --repository-name java_tomcat-hello_world
 ```
 
 ```sh
-[root@localhost ~]# aws ecr describe-repositories
+[root@ip-172-30-3-178 ~]# aws ecr create-repository --repository-name java_tomcat-hello_world
 {
-    "repositories": [
-        {
-            "registryId": "NNNNNNNNNNNNNNN",
-            "repositoryName": "ecr-handson-httpd",
-            "repositoryArn": "arn:aws:ecr:us-east-1:NNNNNNNNNNNNNNN:repository/ecr-handson-httpd",
-            "repositoryUri": "NNNNNNNNNNNNNNN.dkr.ecr.us-east-1.amazonaws.com/ecr-handson-httpd"
-        }
-    ]
+    "repository": {
+        "registryId": "375144106126",
+        "repositoryName": "java_tomcat-hello_world",
+        "repositoryArn": "arn:aws:ecr:us-east-1:375144106126:repository/java_tomcat-hello_world",
+        "repositoryUri": "375144106126.dkr.ecr.us-east-1.amazonaws.com/java_tomcat-hello_world"
+    }
 }
 ```
 
