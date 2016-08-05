@@ -1,4 +1,4 @@
-# CodeDeploy でDcokerビルドに使用するEC2インスタンスを作成
+# CodeDeploy でDcokerビルドに使用するEC2インスタンスの作成手順
 
 ## User Dataを準備
 
@@ -131,3 +131,10 @@ aws ec2 run-instances --image-id ami-55870742 \
 }
 ```
 
+## タグを付与する
+ - EC2インスタンスへのタグ付けは起動後にしかできない
+ - EC2インスタンス作成後にインスタンスIDを確認し `aws ec2 create-tags`コマンドを実行する
+
+ ```sh
+aws ec2 create-tags --resources i-5aec7aa2 --tags Key=role,Value=builder
+```
