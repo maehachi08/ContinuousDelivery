@@ -6,5 +6,5 @@ files:
 hooks:
    AfterInstall:
      - location: /docker/java_servlet_hello_world-docker-build.sh
-       timeout: 600
+       timeout: 1800
 
