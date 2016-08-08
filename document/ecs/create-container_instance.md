@@ -142,6 +142,12 @@ aws iam add-role-to-instance-profile \
 cat << EOT > user_data.sh
 #!/bin/bash
 echo ECS_CLUSTER=JavaTomcatCluster >> /etc/ecs/ecs.config
+
+sudo yum install -y aws-cli ruby
+aws s3 cp s3://aws-codedeploy-us-east-1/latest/install . --region us-east-1
+sudo chmod +x ./install
+sudo ./install auto
+
 EOT
 ```
 
