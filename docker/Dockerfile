@@ -1,11 +1,8 @@
-From docker.io/centos:latest
+From docker.io/centos:6
 MAINTAINER Kazunori Maehata
 ENV container docker
 
-
 RUN yum update  -y && yum clean all
-RUN yum swap -y fakesystemd systemd && yum clean all
-
 
 ADD setup-java-servlet.sh /tmp/setup-java-servlet.sh
 RUN sh /tmp/setup-java-servlet.sh
@@ -20,14 +17,9 @@ ADD hello /var/lib/tomcat/webapps/hello/
 
 
 # supervisord でプロセス起動する
-#RUN yum install -y supervisor
-RUN yum -y install python-setuptools
-RUN easy_install install pip
-RUN pip install supervisor
-
+#   - CentOS6以外のimageを使用する場合はepelからsupervisorをインストールすること
 ADD supervisord.conf /etc/supervisord.conf
 ADD apache_tomcat.ini /etc/supervisord.d/apache_tomcat.ini
-
 
 # コンテナ起動時に実行する
 # httpdプロセス単体を起動するのはこれだけでもよい
