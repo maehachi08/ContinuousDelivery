@@ -1,4 +1,4 @@
-From docker.io/centos:6
+From docker.io/centos:latest
 MAINTAINER Kazunori Maehata
 ENV container docker
 
@@ -17,7 +17,6 @@ ADD hello /var/lib/tomcat/webapps/hello/
 
 
 # supervisord でプロセス起動する
-#   - CentOS6以外のimageを使用する場合はepelからsupervisorをインストールすること
 ADD supervisord.conf /etc/supervisord.conf
 ADD apache_tomcat.ini /etc/supervisord.d/apache_tomcat.ini
 

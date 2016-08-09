@@ -3,12 +3,13 @@
 
 # epel
 rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm
+yum install -y supervisor
 
 # apache + tomcat でJava Servletを動かす
 
 ## 事前準備
-systemctl stop firewalld
-systemctl disable firewalld
+#systemctl stop firewalld
+#systemctl disable firewalld
 
 ## インストール
 ### java実行環境をインストール
@@ -21,7 +22,3 @@ yum install -y httpd
 
 ### tomcatをインストール
 yum install -y tomcat
-
-### サービス自動起動を有効化
-systemctl enable httpd
-systemctl enable tomcat
