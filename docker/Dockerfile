@@ -20,7 +20,10 @@ ADD hello /var/lib/tomcat/webapps/hello/
 
 
 # supervisord でプロセス起動する
-RUN yum install -y supervisor
+#RUN yum install -y supervisor
+RUN yum -y install python-setuptools
+RUN easy_install supervisor
+
 ADD supervisord.conf /etc/supervisord.conf
 ADD apache_tomcat.ini /etc/supervisord.d/apache_tomcat.ini
 
