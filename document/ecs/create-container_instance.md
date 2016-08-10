@@ -143,6 +143,9 @@ cat << EOT > user_data.sh
 #!/bin/bash
 echo ECS_CLUSTER=JavaTomcatCluster >> /etc/ecs/ecs.config
 
+sudo wget -O /usr/local/bin/jq http://stedolan.github.io/jq/download/linux64/jq
+sudo chmod 755 /usr/local/bin/jq
+
 sudo yum install -y aws-cli ruby
 aws s3 cp s3://aws-codedeploy-us-east-1/latest/install . --region us-east-1
 sudo chmod +x ./install
