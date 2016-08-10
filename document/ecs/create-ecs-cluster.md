@@ -10,7 +10,7 @@ cat << EOT > container-definitions.json
   "containerDefinitions": [
     {
       "name": "JavaTomcatDefinition",
-      "image": "375144106126.dkr.ecr.us-east-1.amazonaws.com/ecr-handson-httpd:latest",
+      "image": "375144106126.dkr.ecr.us-east-1.amazonaws.com/java_tomcat-hello_world",
       "cpu": 1,
       "portMappings": [{
         "containerPort": 80,
