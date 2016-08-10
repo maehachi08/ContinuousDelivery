@@ -8,8 +8,8 @@
  1. 本レポジトリをcloneし、dockerディレクトリまで移動
 
  ```sh
-git clone git@github.com:maehachi08/aws-ecs-ecr-test.git
-cd aws-ecs-ecr-test/docker
+git clone git@github.com:maehachi08/docker.git
+cd docker/build/JavaServletHelloWorld/
 ls -l Dockerfile
 ```
 
