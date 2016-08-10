@@ -55,6 +55,12 @@ WARNING: login credentials saved in /root/.docker/config.json
 Login Succeeded
 ```
 
+ **ECRログインを以下のようにワンライナーでも実行可能**
+
+ ```sh
+aws ecr get-login --region us-east-1 | sh
+```
+
 ## dockerマシンイメージにECRのタグ付与
 
 `docker build`した際にタグ名を付与(maehachi08/java-hello-world)していますが、あくまでローカル環境で管理するためのタグ名です。
