@@ -14,21 +14,42 @@ ECRレポジトリの作成方法は大きく2つある。
 
 ## ECRレポジトリを作成
 
-```sh
-ECR_REPOSITORY=ecr-handson-httpd
-aws ecr create-repository --repository-name java_tomcat-hello_world
+ ```sh
+aws ecr create-repository --repository-name java-servlet-hello-world
 ```
 
-```sh
-[root@ip-172-30-3-178 ~]# aws ecr create-repository --repository-name java_tomcat-hello_world
+ ```sh
+# aws ecr create-repository --repository-name java-servlet-hello-world
 {
     "repository": {
         "registryId": "375144106126",
-        "repositoryName": "java_tomcat-hello_world",
-        "repositoryArn": "arn:aws:ecr:us-east-1:375144106126:repository/java_tomcat-hello_world",
-        "repositoryUri": "375144106126.dkr.ecr.us-east-1.amazonaws.com/java_tomcat-hello_world"
+        "repositoryName": "java-servlet-hello-world",
+        "repositoryArn": "arn:aws:ecr:us-east-1:375144106126:repository/java-servlet-hello-world",
+        "repositoryUri": "375144106126.dkr.ecr.us-east-1.amazonaws.com/java-servlet-hello-world"
     }
 }
 ```
 
+## ECRレポジトリ情報の確認
+
+ ```sh
+# aws ecr describe-repositories --repository-names java-servlet-hello-world
+{
+    "repositories": [
+        {
+            "registryId": "375144106126",
+            "repositoryName": "java-servlet-hello-world",
+            "repositoryArn": "arn:aws:ecr:us-east-1:375144106126:repository/java-servlet-hello-world",
+            "repositoryUri": "375144106126.dkr.ecr.us-east-1.amazonaws.com/java-servlet-hello-world"
+        }
+    ]
+}
+```
+
+ レジストリIDを取得したい場合は以下のようにjqコマンドを使用する。
+
+ ```sh
+# aws ecr describe-repositories --repository-names java-servlet-hello-world | jq -r '.repositories[].registryId'
+375144106126
+```
 
