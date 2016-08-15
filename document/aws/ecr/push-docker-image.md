@@ -16,7 +16,7 @@ ls -l Dockerfile
  1. docker buildを実行
 
  ```sh
-docker build -t maehachi08/java-hello-world ./
+docker build -t maehachi08/java-servlet-hello-world ./
 ```
 
 ## ECRへログイン
