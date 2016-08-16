@@ -29,6 +29,9 @@ EOF
 sudo yum install docker-engine
 ```
 
+ 1. dockerサービスを起動する
+
+ ```sh
 sudo service docker start
 ```
 
