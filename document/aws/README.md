@@ -44,3 +44,11 @@ secret_key     ****************XXXX              env
     region                us-east-1              env    AWS_DEFAULT_REGION
 ```
 
+## jqコマンドのインストール
+  - https://stedolan.github.io/jq/
+  - jqコマンドはJSONをいい感じに整形して出力してくれるツールです。
+
+ ```sh
+wget -o /usr/local/bin/jq http://stedolan.github.io/jq/download/linux64/jq
+chmod 755 /usr/local/bin/jq
+```
