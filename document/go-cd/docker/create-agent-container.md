@@ -251,3 +251,101 @@ root                6304                6300                0                   
 2016-08-17 22:08:13,548  INFO [qtp185593132-25] CachedGoConfig:158 - Finished notifying com.thoughtworks.go.config.Agents config listeners
 ```
 
+## GoCD Agent dockerコンテナを複数台起動する
+
+### バッグラウンド起動コマンドを3回実行する
+  - 単純に以下コマンドを回数分叩くだけ
+  - for とかで回してもよいかも
+
+ ```sh
+docker run -d -e GO_SERVER=52.90.22.243 -e AGENT_KEY=388b633a88de126531afa41eff9aa69e gocd/gocd-agent
+```
+
+ ```sh
+[root@ip-172-30-3-90 ~]# docker ps -f ancestor=gocd/gocd-agent
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+aa2a96faecf3        gocd/gocd-agent     "/sbin/my_init"     4 minutes ago       Up 4 minutes                            evil_shirley
+e5c56fa6a6ab        gocd/gocd-agent     "/sbin/my_init"     5 minutes ago       Up 5 minutes                            focused_boyd
+47b2110d9fc1        gocd/gocd-agent     "/sbin/my_init"     7 minutes ago       Up 7 minutes                            jolly_hodgkin
+```
+
+### docker-compose で起動
+  - docker-compose とはdockerコンテナをYAMLで管理でき、複数台を定義できる
+
+#### docker-compose インストール
+
+ ```sh
+curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+```
+
+ bash-completion入れてるので補完できるようにする
+
+ ```sh
+curl -L https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose
+```
+
+#### docker-compose.yml 作成
+
+ ```sh
+mkdir docker-compose
+cd docker-compose
+vim docker-compose.yml
+```
+
+ ```yaml
+version: '2'
+services:
+  go-cd-agent-01:
+    container_name: go-cd-agent-01
+    image: gocd/gocd-agent
+    environment:
+      GO_SERVER: 52.90.22.243
+      AGENT_KEY: 388b633a88de126531afa41eff9aa69e
+  go-cd-agent-02:
+    container_name: go-cd-agent-02
+    image: gocd/gocd-agent
+    environment:
+      GO_SERVER: 52.90.22.243
+      AGENT_KEY: 388b633a88de126531afa41eff9aa69e
+  go-cd-agent-03:
+    container_name: go-cd-agent-03
+    image: gocd/gocd-agent
+    environment:
+      GO_SERVER: 52.90.22.243
+      AGENT_KEY: 388b633a88de126531afa41eff9aa69e
+```
+
+#### docker-compose でdockerマシンを起動
+  - psサブコマンドでdocker-compose経由で起動しているdockerマシンがいないことを確認
+  - upサブコマンドに -dオプションを付加しバックグラウンド起動する
+
+ ```sh
+docker-compose ps
+docker-compose up -d
+```
+
+##### 実行ログ
+
+ ```sh
+[root@ip-172-30-3-90 docker-compose]# docker-compose ps
+Name   Command   State   Ports
+------------------------------
+[root@ip-172-30-3-90 docker-compose]# docker-compose up -d
+Creating network "dockercompose_default" with the default driver
+Creating go-cd-agent-03
+Creating go-cd-agent-01
+Creating go-cd-agent-02
+[root@ip-172-30-3-90 docker-compose]# docker-compose ps
+     Name           Command      State   Ports
+----------------------------------------------
+go-cd-agent-01   /sbin/my_init   Up
+go-cd-agent-02   /sbin/my_init   Up
+go-cd-agent-03   /sbin/my_init   Up
+[root@ip-172-30-3-90 docker-compose]# docker ps -a -f name=go-cd-agent*
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS               NAMES
+1fdb70310cf8        gocd/gocd-agent     "/sbin/my_init"     About a minute ago   Up About a minute                       go-cd-agent-02
+c36684a7ee1f        gocd/gocd-agent     "/sbin/my_init"     About a minute ago   Up About a minute                       go-cd-agent-01
+a6a838d594fb        gocd/gocd-agent     "/sbin/my_init"     About a minute ago   Up About a minute                       go-cd-agent-03
+```
+
