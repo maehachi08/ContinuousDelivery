@@ -51,7 +51,7 @@ aws ec2 authorize-security-group-ingress \
 
  ```sh
 aws ec2 run-instances --image-id ami-55870742 \
---instance-type t2.micro \
+--instance-type t2.medium \
 --count 1 \
 --key-name HelloWorld \
 --iam-instance-profile Name=web \
