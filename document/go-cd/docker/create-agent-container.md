@@ -58,6 +58,8 @@ aws ec2 run-instances --image-id ami-55870742 \
 --security-group-ids sg-138a5969 \
 --subnet subnet-eacbc0d7 \
 --associate-public-ip-address
+
+aws ec2 create-tags --resources <インスタンスID> --tags Key=Name,Value=go-agent
 ```
 
 ## GoCD Agent dockerマシンイメージの取得
