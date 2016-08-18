@@ -171,5 +171,81 @@ Logging to go-agent-bootstrapper.log
 2016-08-17 20:50:41,707  INFO [qtp185593132-30] CachedGoConfig:158 - Finished notifying com.thoughtworks.go.config.Agents config listeners
 ```
 
+## GoCD Agent dockerコンテナをバックグラウンド起動(デーモン起動)
+  - `GO_SERVER` 環境変数でGoCD Serverを指定する
+  - `AGENT_KEY` 環境変数でリモートAgentを自動登録する(Agent　Auto　Registration)
+  - `Agent　Auto　Registration` が実施されていないと`http://<GoCD Server>:8153/go/agents` の **status が pending となる**
 
+ ```sh
+docker run -d -e GO_SERVER=<GoCD Server> -e AGENT_KEY=<GoCD ServerのagentAutoRegisterKeyの値> gocd/gocd-agent
+```
+
+### 実行ログ
+
+#### GoCD Agentコンテナ起動時の実行ログ
+
+ - コンテナを起動する
+
+ ```sh
+[root@ip-172-30-0-222 ~]# docker run -d -e GO_SERVER=52.90.22.243 -e AGENT_KEY=388b633a88de126531afa41eff9aa69e gocd/gocd-agent
+cc0c9d4a2fe4d47d10b4be2893435915568e09880d3ae7476d26a6b150fc092f
+```
+
+ - コンテナ情報を確認する。
+
+ ```sh
+[root@ip-172-30-0-222 ~]# docker ps -f id=cc0c9d4a2fe4d47d10b4be2893435915568e09880d3ae7476d26a6b150fc092f
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS               NAMES
+cc0c9d4a2fe4        gocd/gocd-agent     "/sbin/my_init"     About a minute ago   Up About a minute                       pedantic_easley
+```
+
+ - コンテナで実行中のプロセスを表示する
+
+ ```sh
+[root@ip-172-30-0-222 ~]# docker top cc0c9d4a2fe4d47d10b4be2893435915568e09880d3ae7476d26a6b150fc092f
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                6256                6226                0                   05:07               ?                   00:00:00            /usr/bin/python3 -u /sbin/my_init
+root                6296                6256                0                   05:07               ?                   00:00:00            /usr/bin/runsvdir -P /etc/service
+root                6297                6296                0                   05:07               ?                   00:00:00            runsv syslog-ng
+root                6298                6296                0                   05:07               ?                   00:00:00            runsv cron
+root                6299                6296                0                   05:07               ?                   00:00:00            runsv syslog-forwarder
+root                6300                6296                0                   05:07               ?                   00:00:00            runsv go-agent
+root                6301                6297                0                   05:07               ?                   00:00:00            syslog-ng -F -p /var/run/syslog-ng.pid --no-caps
+root                6302                6298                0                   05:07               ?                   00:00:00            /usr/sbin/cron -f
+root                6303                6299                0                   05:07               ?                   00:00:00            tail -F -n 0 /var/log/syslog
+root                6304                6300                0                   05:07               ?                   00:00:00            /bin/bash ./run
+999                 6314                6304                0                   05:07               ?                   00:00:00            /bin/bash /etc/init.d/go-agent start
+999                 6319                6314                2                   05:07               ?                   00:00:04            java -jar /usr/share/go-agent/agent-bootstrapper.jar -serverUrl https://52.90.22.243:8154/go/
+999                 6340                6319                9                   05:07               ?                   00:00:13            /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java -Dcruise.console.publish.interval=10 -Xms128m -Xmx256m -Djava.security.egd=file:/dev/./urandom -Dagent.launcher.version=16.7.0-3819 -Dagent.plugins.md5=3e65339242506c3491c2aee13b355cc1 -Dagent.binary.md5=Qs4q6hbsH0CaDAZ3aJVb9A== -Dagent.launcher.md5=IWq49widZPfPYQNsCNvXGA== -jar agent.jar -serverUrl https://52.90.22.243:8154/go/ -sslVerificationMode NONE
+```
+
+#### GoCD Agentコンテナ起動時のGoCD Serverログ
+  - `/var/log/go-server/go-server.log`
+  - Agentの自動登録が成功していることを確認できる
+    - `Auto registering agent with uuid 087ac639-bbc0-40b3-bc62-23d81631f633`
+
+ ```
+2016-08-17 22:08:03,403  INFO [qtp185593132-24] AgentRegistrationController:210 - [Agent Auto Registration] Auto registering agent with uuid 087ac639-bbc0-40b3-bc62-23d81631f633
+2016-08-17 22:08:03,403  INFO [qtp185593132-24] GoConfigDao:94 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@7477db04[displayName=anonymous,username=anonymous] is in queue - com.thoughtworks.go.config.update.AgentsUpdateCommand@3526b318
+2016-08-17 22:08:03,403  INFO [qtp185593132-24] GoConfigDao:96 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@7477db04[displayName=anonymous,username=anonymous] is being processed
+2016-08-17 22:08:03,405  WARN [qtp185593132-24] UpdateEnvironmentsCommand:44 - [Agent Auto Registration] Agent with uuid 087ac639-bbc0-40b3-bc62-23d81631f633 could not be assigned to environment  as it does not exist.
+2016-08-17 22:08:03,409  INFO [qtp185593132-24] GoFileConfigDataSource:277 - [Configuration Changed] Saving updated configuration.
+2016-08-17 22:08:03,517  INFO [qtp185593132-24] MagicalGoConfigXmlWriter:86 - [Serializing Config] Generating config partial.
+2016-08-17 22:08:03,585  INFO [qtp185593132-24] CachedGoConfig:143 - About to notify com.thoughtworks.go.config.Agents config listeners
+2016-08-17 22:08:03,585  INFO [qtp185593132-24] CachedGoConfig:158 - Finished notifying com.thoughtworks.go.config.Agents config listeners
+2016-08-17 22:08:04,389  INFO [qtp185593132-24] GoConfigDao:94 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@6403de40[displayName=agent_087ac639-bbc0-40b3-bc62-23d81631f633_52.201.245.31_cc0c9d4a2fe4,username=agent_087ac639-bbc0-40b3-bc62-23d81631f633_52.201.245.31_cc0c9d4a2fe4] is in queue - com.thoughtworks.go.config.update.AgentsUpdateCommand@39f46f0c
+2016-08-17 22:08:04,389  INFO [qtp185593132-24] GoConfigDao:96 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@6403de40[displayName=agent_087ac639-bbc0-40b3-bc62-23d81631f633_52.201.245.31_cc0c9d4a2fe4,username=agent_087ac639-bbc0-40b3-bc62-23d81631f633_52.201.245.31_cc0c9d4a2fe4] is being processed
+2016-08-17 22:08:04,400  INFO [qtp185593132-24] GoFileConfigDataSource:277 - [Configuration Changed] Saving updated configuration.
+2016-08-17 22:08:04,440  INFO [qtp185593132-24] MagicalGoConfigXmlWriter:86 - [Serializing Config] Generating config partial.
+2016-08-17 22:08:04,444  INFO [qtp185593132-24] CachedGoConfig:143 - About to notify com.thoughtworks.go.config.Agents config listeners
+2016-08-17 22:08:04,445  INFO [qtp185593132-24] CachedGoConfig:158 - Finished notifying com.thoughtworks.go.config.Agents config listeners
+2016-08-17 22:08:09,897  INFO [qtp185593132-32] BuildRepositoryRemoteImpl:133 - [Agent Cookie] Agent [Agent [cc0c9d4a2fe4, 172.17.0.2, 087ac639-bbc0-40b3-bc62-23d81631f633]] at location [/var/lib/go-agent] asked for a new cookie, assigned [e38bc9f3-1af9-471a-96a2-d4a657b10ed9]
+2016-08-17 22:08:13,459  WARN [qtp185593132-25] AgentService:312 - Agent with UUID [087ac639-bbc0-40b3-bc62-23d81631f633] changed IP Address from [52.201.245.31] to [172.17.0.2]
+2016-08-17 22:08:13,460  INFO [qtp185593132-25] GoConfigDao:94 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@49ae74dd[displayName=agent_087ac639-bbc0-40b3-bc62-23d81631f633_172.17.0.2_cc0c9d4a2fe4,username=agent_087ac639-bbc0-40b3-bc62-23d81631f633_172.17.0.2_cc0c9d4a2fe4] is in queue - com.thoughtworks.go.config.update.AgentsUpdateCommand@5c7a7ef5
+2016-08-17 22:08:13,460  INFO [qtp185593132-25] GoConfigDao:96 - Config update for pipeline request by com.thoughtworks.go.server.domain.Username@49ae74dd[displayName=agent_087ac639-bbc0-40b3-bc62-23d81631f633_172.17.0.2_cc0c9d4a2fe4,username=agent_087ac639-bbc0-40b3-bc62-23d81631f633_172.17.0.2_cc0c9d4a2fe4] is being processed
+2016-08-17 22:08:13,466  INFO [qtp185593132-25] GoFileConfigDataSource:277 - [Configuration Changed] Saving updated configuration.
+2016-08-17 22:08:13,492  INFO [qtp185593132-25] MagicalGoConfigXmlWriter:86 - [Serializing Config] Generating config partial.
+2016-08-17 22:08:13,548  INFO [qtp185593132-25] CachedGoConfig:143 - About to notify com.thoughtworks.go.config.Agents config listeners
+2016-08-17 22:08:13,548  INFO [qtp185593132-25] CachedGoConfig:158 - Finished notifying com.thoughtworks.go.config.Agents config listeners
+```
 
