@@ -6,13 +6,26 @@
   - https://hub.docker.com/r/gocd/
     - GoCD関連のDockerマシンイメージレジストラのページ
 
-## GoCD Server側でAgentとの通信に必要なポートを開放する
+## GoCD Server側の設定
+
+### Agentとの通信に必要なポートを開放する
   - GoCD Serverは `TCP/8154` でAgentと通信を行う
 
  `TCP/8154` ポートを開放していないと以下エラーとなる。
 
  ```
 java.lang.Exception: Couldn't access Go Server with base url: https://52.90.22.243:8154/go/admin/agent-launcher.jar: org.apache.http.conn.ConnectTimeoutException: Connect to 52.90.22.243:8154 [/52.90.22.243] failed: connect timed out
+```
+
+### Config XMLに `agentAutoRegisterKey` を追記する
+  - refs https://docs.go.cd/16.5.0/advanced_usage/agent_auto_register.html
+  - `<GoCD Server>:/etc/go/cruise-config.xml` もしくは `http://<GoCD Server>:8153/go/admin/config_xml`
+  - `server` 要素に以下内容を追記
+    - `agentAutoRegisterKey="388b633a88de126531afa41eff9aa69e"`
+
+ ```sh
+[root@ip-172-30-3-34 ~]# grep agentAutoRegisterKey /etc/go/cruise-config.xml
+  <server artifactsdir="artifacts" agentAutoRegisterKey="388b633a88de126531afa41eff9aa69e" commandRepositoryLocation="default" serverId="022fc458-a44e-4fb5-95d7-e547c72bc481">
 ```
 
 ## コンテナインスタンス作成
