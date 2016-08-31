@@ -1,9 +1,0 @@
-version: 0.0
-os: linux
-files:
-  - source: docker
-    destination: /tmp/docker/
-hooks:
-   AfterInstall:
-     - location: /docker/java_servlet_hello_world-docker-build.sh
-       timeout: 1800
