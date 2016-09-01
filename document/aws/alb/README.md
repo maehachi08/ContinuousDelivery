@@ -9,7 +9,24 @@
 
 ## ALBとECS
 
- ALBによってECSクラスタによる複数のdockerコンテナへのロードバランスがサポートされました。ECSクラスタでは動的ポートマッピングという、同一EC2コンテナインスタンス上の複数のdockerマシンへのホスト側ポートを動的に割り当てる機能があり、ECSスケジューラはこのポート情報をALBに連携することが可能です。
+### ECSのTaskDefinitionで動的ポートマッピングをサポート
+  - 動的ポートマッピング(Dynamic Port Mapping)
+  - ECSで作成するDockerコンテナのポートマッピングに関してホスト側のポートを動的に割り当ててくれる
+  - 空きポートを勝手に割り当ててくれるのでAutoScalingや起動するタスク数を変えたい場合に便利
+  - JSONで定義する場合、 `containerDefinitions` の `portMappings` で **hostPortを0**に設定する
 
- ALB(およびターゲットグループ)を定義しておけば、ECSクラスタのService定義にあるLoad Balancingにてターゲットグループを選択することで簡単にロードバランスさせることができ、Serviceの更新によってコンテナが再デプロイされた場合でも、動的ポートマッピングによって変更されたポート情報をALBに連携するので、途絶えることなくロードバランスすることができます。
+ ```json
+"portMappings": [
+  {
+    "containerPort": 80,
+    "hostPort": 0,
+    "protocol": "tcp"
+  }
+],
+```
+
+### ALBはECSの動的ポートマッピングに対応
+  - ECS ClusterのService定義においてLoad Balancer設定がある
+  - Service定義で作成済みALBを指定する
+  - `ecs-service-scheduler` が `Elastic Load Balancing API(elasticloadbalancing.amazonaws.com)` に対してALBのターゲットグループ内のインスタンス情報の更新リクエストを送っているようです(CloudTrailのAPIアクティビティ監視から確認)
 
