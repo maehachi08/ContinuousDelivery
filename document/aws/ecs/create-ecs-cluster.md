@@ -1,10 +1,13 @@
 # ECSクラスタ作成
 
 ## タスク定義
+  - Dockerコンテナに関する設定
+  - `containerDefinitions` の `portMappings` で **hostPortを0に設定することで動的ポートマッピング**
+    - http://docs.aws.amazon.com/ja_jp/AmazonECS/latest/APIReference/API_PortMapping.html
 
-タスク定義で使用するコンテナ定義を記述したjsonファイルを準備。
+ 1. TaskDefinitionsをJSON形式のファイルで定義しておきます
 
-```sh
+ ```sh
 cat << EOT > container-definitions.json
 {
   "containerDefinitions": [
@@ -14,11 +17,11 @@ cat << EOT > container-definitions.json
       "cpu": 1,
       "portMappings": [{
         "containerPort": 80,
-        "hostPort": 80,
+        "hostPort": 0,
         "protocol": "tcp"
       }],
       "command": [ "/usr/bin/supervisord" ],
-      "memory": 256,
+      "memory": 128,
       "essential": true
     }
   ],
@@ -27,52 +30,10 @@ cat << EOT > container-definitions.json
 EOT
 ```
 
-タスクを定義します。
+ 1. 作成したJSONファイルを使ってタスクを定義します。
 
-```sh
+ ```sh
 aws ecs register-task-definition --cli-input-json file://container-definitions.json
-```
-
-実行結果は以下のとおり。
-
-```sh
-[root@localhost aws]# aws ecs register-task-definition --cli-input-json file://container-definitions.json
-{
-    "taskDefinition": {
-        "status": "ACTIVE",
-        "family": "JavaTomcatDefinition",
-        "requiresAttributes": [
-            {
-                "name": "com.amazonaws.ecs.capability.ecr-auth"
-            }
-        ],
-        "volumes": [],
-        "taskDefinitionArn": "arn:aws:ecs:us-east-1:375144106126:task-definition/JavaTomcatDefinition:3",
-        "containerDefinitions": [
-            {
-                "environment": [],
-                "name": "JavaTomcatDefinition",
-                "mountPoints": [],
-                "image": "375144106126.dkr.ecr.us-east-1.amazonaws.com/ecr-handson-httpd:latest",
-                "cpu": 1,
-                "portMappings": [
-                    {
-                        "protocol": "tcp",
-                        "containerPort": 80,
-                        "hostPort": 80
-                    }
-                ],
-                "command": [
-                    "/usr/bin/supervisord"
-                ],
-                "memory": 256,
-                "essential": true,
-                "volumesFrom": []
-            }
-        ],
-        "revision": 3
-    }
-}
 ```
 
 ## クラスタ作成
