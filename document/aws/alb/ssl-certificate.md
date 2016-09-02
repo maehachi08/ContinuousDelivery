@@ -161,3 +161,33 @@ aws elbv2 modify-listener \
     ]
 }
 ```
+
+## 証明書期限の確認方法
+
+### aws cli
+
+ ```sh
+aws iam list-server-certificates
+```
+
+ ```sh
+[root@ip-172-30-3-156 ~]# aws iam list-server-certificates | grep -B 1 Expiration
+            "ServerCertificateName": "HelloWorldSSL",
+            "Expiration": "2017-09-01T08:46:53Z",
+--
+            "ServerCertificateName": "HelloWorldSSL_30",
+            "Expiration": "2016-10-01T08:51:16Z",
+```
+
+### openssl
+
+ ```sh
+openssl s_client -connect <URL:443> -showcerts 2>/dev/null | openssl x509 -enddate  -noout
+```
+
+ 上記コマンド結果は以下のように表示される。あとは今日から何日あるのか日数計算をしてやればよい。
+
+ ```
+notAfter=Sep  1 08:46:53 2017 GMT
+```
+
