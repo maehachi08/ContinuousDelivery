@@ -1,5 +1,16 @@
 # AWSで継続的デリバリー
 
+## 基本パッケージ
+
+ ```sh
+sudo yum install -y git wget golang vim-enhanced unzip gzip epel-release
+
+# Amazon Linuxに対するbash-completionの導入
+wget http://www.caliban.org/files/redhat/RPMS/noarch/bash-completion-20060301-1.noarch.rpm
+sudo rpm -ivh bash-completion-20060301-1.noarch.rpm
+. /etc/bash_completion
+```
+
 ## aws cli
 
 ### インストール
@@ -8,6 +19,10 @@
 yum install -y python python-devel python-setuptools --enablerepo=epel
 easy_install pip
 pip install awscli
+
+# bash-completionでaws cliを補完する
+echo complete -C '/usr/local/bin/aws_completer' aws >> ~/.bash_profile
+source ~/.bash_profile
 ```
 
 awsコマンドのバージョンは以下のとおり。
@@ -51,13 +66,5 @@ secret_key     ****************XXXX              env
  ```sh
 wget -o /usr/local/bin/jq http://stedolan.github.io/jq/download/linux64/jq
 chmod 755 /usr/local/bin/jq
-```
-
-## AmazonLinuxへのbash-completionインストール
-
- ```sh
-wget http://www.caliban.org/files/redhat/RPMS/noarch/bash-completion-20060301-1.noarch.rpm
-rpm -ivh bash-completion-20060301-1.noarch.rpm
-. /etc/bash_completion
 ```
 
