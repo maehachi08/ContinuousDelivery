@@ -59,7 +59,6 @@ def lambda_handler(event, context):
   for key, value in dict.items():
     print( key,  value )
 
-  return dict
 ```
 
 ## デプロイパッケージの作成
