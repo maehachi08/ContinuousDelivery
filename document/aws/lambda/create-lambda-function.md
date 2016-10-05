@@ -111,5 +111,21 @@ aws lambda --region us-east-1 \
     --function-name get-ecs-optimzed-ami-id \
     --zip-file fileb://lambda_function.zip
 ```
-```
 
+### VPCを指定する場合の注意点
+  - [Qiita AWS LambdaのVPCアクセスに関して少しだけ解説](http://qiita.com/Keisuke69/items/1d84684f0511a062e968)
+  - [Amazon VPC 内のリソースにアクセスできるように Lambda 関数を構成する](http://docs.aws.amazon.com/ja_jp/lambda/latest/dg/vpc.html)
+  - [実行ロール (IAM ロール) を作成する](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/vpc-rds-create-iam-role.html)
+
+  Lambdaファンクションを使ってVPC内のリソースにアクセスできるようにする場合、 `--vpc-config` オプションで対象VPCのVPC サブネット ID やセキュリティグループ ID など、追加の VPC 固有設定情報を指定する必要があります。AWS Lambdaは `--vpc-config` オプションで指定された情報を使用して、Lambdaファンクションがプライベート VPC 内の他のリソースに安全に接続できる [Elastic Network Interface (ENI)](http://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/using-eni.html) を作成します。
+
+  従って、Lambdaファンクションの実行ロール(上記例ではlambda_basic_execution)は[Elastic Network Interface (ENI)](http://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/using-eni.html)を作成するためのアクセス許可が必要です。
+
+  AWS Lambdaでは、アクセス権限ポリシー AWSLambdaVPCAccessExecutionRole が提供されています。このポリシーでは、ロールの作成時に使用できる、必要な EC2 アクション (ec2:CreateNetworkInterface、 ec2:DescribeNetworkInterfaces、ec2:DeleteNetworkInterface) 用のアクセス許可が定義されます。
+
+   1. IAMコンソールを開く
+   1. ロール > 新しいロールの作成
+   1. ロール名を入力(lambda-vpc-execution-roleなど)
+   1. ロールタイプの選択で `AWS Lambda` を選択
+   1. `AWSLambdaVPCAccessExecutionRole` をチェック
+   1. `ロールの作成` をクリック
